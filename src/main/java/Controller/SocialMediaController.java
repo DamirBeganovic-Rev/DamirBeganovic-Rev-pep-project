@@ -1,6 +1,7 @@
 package Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
@@ -28,10 +29,10 @@ public class SocialMediaController {
         Javalin app = Javalin.create();
         app.get("example-endpoint", this::exampleHandler);
 
-        // 1: TODO create a new account
+        // 1: create a new account
         app.post("/register", this::registerHandler);
 
-        // 2: TODO process login
+        // 2: process login
         app.post("/login", this::loginHandler);
 
         // 3: TODO create a new message
@@ -63,8 +64,14 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
+
+    /*
+     * Handler to post a new Account
+     * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
+     * If accountService returns a null account (meaning posting a account was unsuccessful, the API will return a 400
+     * message (client error).
+     */
     private void registerHandler(Context context) throws JsonProcessingException {
-        // 1: TODO create a new account
         ObjectMapper objectMapper = new ObjectMapper();
         Account account = objectMapper.readValue(context.body(), Account.class);
         Account registeredAccount = accountService.addAcount(account);
@@ -74,12 +81,26 @@ public class SocialMediaController {
         } else {
             context.status(200);
             context.json(objectMapper.writeValueAsString(registeredAccount));
-            
         }
     }
 
-    private void loginHandler(Context context){
-        // 2: TODO process login
+    /*
+     * Handler to log into an Account
+     * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
+     * If accountService returns a null account (meaning an account with a username:password key:value pair was 
+     * not found, the API will return a 401 status code message (unauthorized)
+     */
+    private void loginHandler(Context context) throws JsonMappingException, JsonProcessingException{
+        ObjectMapper objectMapper = new ObjectMapper();
+        Account account = objectMapper.readValue(context.body(), Account.class);
+        Account loggedinAccount = accountService.login(account);
+
+        if (loggedinAccount == null) {
+            context.status(401);
+        } else {
+            context.status(200);
+            context.json(objectMapper.writeValueAsString(loggedinAccount));
+        }
     }
 
     private void createMessageHandler(Context context){

@@ -44,4 +44,22 @@ public class AccountService {
         }
     }
 
+    /*
+     * Logs a user into their account
+     * 
+     * @param account an object representing a user's Account.
+     * @return the logged in Account if the login operation was successful (an an account with
+     * the supplied username and password exists in the database), including the account_id. 
+     * The returned Account is the persisted Account which is stored in the database, and not
+     * the parameter account which only exists in the application
+     */
+    public Account login(Account account){
+        if (accountDAO.getAccountByUsernameAndPassword(account) != null){
+            Account loggedinAccount = accountDAO.getAccountByUsernameAndPassword(account);
+            return loggedinAccount;
+        } else {
+            return null;
+        }
+    }
+
 }

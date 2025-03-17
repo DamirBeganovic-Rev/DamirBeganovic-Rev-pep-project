@@ -40,6 +40,36 @@ public class AccountDAO {
         }
         return null;
     }
+
+    /*
+     * Select an Account from the database by its username and password
+     * 
+     * @param account An object modelling an Account.
+     * @return Account A persisted account from  the database
+     */
+    public Account getAccountByUsernameAndPassword(Account account){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT * FROM account WHERE username = ? AND password = ?;";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, account.getUsername());
+            preparedStatement.setString(2, account.getPassword());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                Account selectedAccount = new Account();
+                selectedAccount.setAccount_id(resultSet.getInt("account_id"));
+                selectedAccount.setUsername(resultSet.getString("username"));
+                selectedAccount.setPassword(resultSet.getString("password"));
+                return selectedAccount;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
     
     /*
      * Insert a new Account into the database
