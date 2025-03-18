@@ -1,5 +1,7 @@
 package Service;
 
+import java.util.List;
+
 import DAO.MessageDAO;
 import Model.Message;
 
@@ -19,6 +21,17 @@ public class MessageService {
     public MessageService(MessageDAO messageDAO){
         this.messageDAO = messageDAO;
     }
+
+    /*
+     * Retrieve all messages
+     * 
+     * @return List<Message> a list of all messages in the database
+     */
+    public List<Message> getAllMessages(){
+        List<Message> allMessages = messageDAO.getAllMessages();
+        return allMessages;
+    }
+
 
     /* // TODO : Test cases may be broken. Cases 2-4 seem to always pass 
      * //        No matter what

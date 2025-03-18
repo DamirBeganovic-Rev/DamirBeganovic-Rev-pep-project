@@ -1,5 +1,7 @@
 package Controller;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,7 +44,7 @@ public class SocialMediaController {
         // 3: TODO create a new message
         app.post("/messages", this::createMessageHandler);
 
-        // 4: TODO get all messages
+        // 4: get all messages
         app.get("/messages", this::getAllMessagesHandler);
 
         // 5: TODO get a message by its message ID
@@ -68,23 +70,27 @@ public class SocialMediaController {
         context.json("sample text");
     }
 
-
     /*
      * Handler to post a new Account
      * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
      * If accountService returns a null account (meaning posting a account was unsuccessful, the API will return a 400
      * message (client error).
      */
-    private void registerHandler(Context context) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        Account account = objectMapper.readValue(context.body(), Account.class);
-        Account registeredAccount = accountService.addAcount(account);
-
-        if (registeredAccount == null){
-            context.status(400);
-        } else {
-            context.status(200);
-            context.json(objectMapper.writeValueAsString(registeredAccount));
+    private void registerHandler(Context context) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Account account = objectMapper.readValue(context.body(), Account.class);
+            Account registeredAccount = accountService.addAcount(account);
+            if (registeredAccount == null){
+                context.status(400);
+            } else {
+                context.status(200);
+                context.json(objectMapper.writeValueAsString(registeredAccount));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -94,16 +100,21 @@ public class SocialMediaController {
      * If accountService returns a null account (meaning an account with a username:password key:value pair was 
      * not found, the API will return a 401 status code message (unauthorized)
      */
-    private void loginHandler(Context context) throws JsonMappingException, JsonProcessingException{
-        ObjectMapper objectMapper = new ObjectMapper();
-        Account account = objectMapper.readValue(context.body(), Account.class);
-        Account loggedinAccount = accountService.login(account);
-
-        if (loggedinAccount == null) {
-            context.status(401);
-        } else {
-            context.status(200);
-            context.json(objectMapper.writeValueAsString(loggedinAccount));
+    private void loginHandler(Context context) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Account account = objectMapper.readValue(context.body(), Account.class);
+            Account loggedinAccount = accountService.login(account);
+            if (loggedinAccount == null) {
+                context.status(401);
+            } else {
+                context.status(200);
+                context.json(objectMapper.writeValueAsString(loggedinAccount));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
     }
 
@@ -137,8 +148,25 @@ public class SocialMediaController {
         // }
     }
 
+    /*
+     * Handler to get all messages from the database.
+     * If messageService returns an empty list, then there are no messages in the database
+     * and the response body will be empty
+     * If messageService returns a list of Messages, then the database has messages in it
+     * and the response body will be JSON representation of the list of messages.
+     * In both cases, the API will return a status code of 200
+     */
     private void getAllMessagesHandler(Context context){
-        // 4: TODO get all messages
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<Message> allMessages = messageService.getAllMessages();
+        context.status(200);
+        try {
+            context.json(objectMapper.writeValueAsString(allMessages));
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void getMessageByMessageIdHandler(Context context){

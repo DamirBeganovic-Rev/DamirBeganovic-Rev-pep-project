@@ -4,11 +4,43 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import Model.Message;
 import Util.ConnectionUtil;
 
 public class MessageDAO {
+
+    /*
+     * Get all messages from the database
+     * 
+     * @return List<Message> a list of all messages
+     */
+    public List<Message> getAllMessages(){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT * FROM message;";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Message> allMessages = new ArrayList<>();
+            while (resultSet.next()){
+                Message message = new Message();
+                message.setMessage_id(resultSet.getInt("message_id"));
+                message.setPosted_by(resultSet.getInt("posted_by"));
+                message.setMessage_text(resultSet.getString("message_text"));
+                message.setTime_posted_epoch(resultSet.getLong("time_posted_epoch"));
+                allMessages.add(message);
+            }
+            return allMessages;
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
 
     /*
      * Insert a new Message into the database
