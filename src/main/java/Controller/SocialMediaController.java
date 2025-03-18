@@ -5,7 +5,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import Model.Account;
+import Model.Message;
 import Service.AccountService;
+import Service.MessageService;
 import io.javalin.Javalin;
 import io.javalin.http.Context;
 
@@ -16,8 +18,10 @@ import io.javalin.http.Context;
  */
 public class SocialMediaController {
     AccountService accountService;
+    MessageService messageService;
     public SocialMediaController(){
         accountService = new AccountService();
+        messageService = new MessageService();
     }
     
     /**
@@ -103,8 +107,34 @@ public class SocialMediaController {
         }
     }
 
-    private void createMessageHandler(Context context){
+    private void createMessageHandler(Context context) throws JsonMappingException, JsonProcessingException{
         // 3: TODO create a new message
+        ObjectMapper objectMapper = new ObjectMapper();
+        Message message = objectMapper.readValue(context.body(), Message.class);
+        Message createdMessage = messageService.addMessage(message);
+        if (createdMessage == null){
+            context.status(400);
+        } else {
+            context.status(200);
+            context.json(objectMapper.writeValueAsString(createdMessage));
+        }
+        // TODO Change all of the handlers to use try/catch after this one is working
+        // try {
+        //     Message message = objectMapper.readValue(context.body(), Message.class);
+        //     Message createdMessage = messageService.addMessage(message);
+        //     if (createdMessage == null){
+        //         context.status(400);
+        //     } else {
+        //         context.status(200);
+        //         context.json(objectMapper.writeValueAsString(createdMessage));
+        //     }
+        // } catch (JsonMappingException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // } catch (JsonProcessingException e) {
+        //     // TODO Auto-generated catch block
+        //     e.printStackTrace();
+        // }
     }
 
     private void getAllMessagesHandler(Context context){

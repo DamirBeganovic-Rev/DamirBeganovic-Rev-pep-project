@@ -12,6 +12,36 @@ import Model.Account;
 public class AccountDAO {
 
     /*
+     * Select an Account from the database by its account_ID
+     * 
+     * @param account An object modelling an Account.
+     * @return Account A persisted account from  the database
+     */
+    public Account getAccountByID(Account account){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT * FROM account WHERE user_id = ?;";
+            
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, account.getAccount_id());
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()){
+                Account selectedAccount = new Account();
+                selectedAccount.setAccount_id(resultSet.getInt("account_id"));
+                selectedAccount.setUsername(resultSet.getString("username"));
+                selectedAccount.setPassword(resultSet.getString("password"));
+                return selectedAccount;
+            }
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /*
      * Select an Account from the database by its username
      * 
      * @param account An object modelling an Account.
@@ -79,6 +109,7 @@ public class AccountDAO {
      */
     public Account insertAccount(Account account){
         Connection connection = ConnectionUtil.getConnection();
+        
         try {
             String sql = "INSERT INTO account (username, password) VALUES (?, ?);";
 
@@ -91,7 +122,11 @@ public class AccountDAO {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if  (resultSet.next()){
                 int generated_account_id = (int) resultSet.getLong("account_id");
-                return new Account(generated_account_id, account.getUsername(), account.getPassword());
+                Account insertedAccount = new Account();
+                insertedAccount.setAccount_id(generated_account_id);
+                insertedAccount.setUsername(account.getUsername());
+                insertedAccount.setPassword(account.getPassword());
+                return insertedAccount;
             }
             
         } catch (SQLException e) {

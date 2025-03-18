@@ -24,7 +24,7 @@ public class AccountService {
      * Creates a new Account to be added to the database
      * 
      * @param account an object representing a new Account.
-     * @return the newly added account if the add operation was successful, including the account_id. 
+     * @return the newly added Account if the add operation was successful, including the account_id. 
      * The returned Account is the persisted Account which is now stored in the database, and not
      * the parameter account which only exists in the application
      */
