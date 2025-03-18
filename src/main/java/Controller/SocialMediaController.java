@@ -119,34 +119,26 @@ public class SocialMediaController {
         }
     }
 
-    private void createMessageHandler(Context context) throws JsonMappingException, JsonProcessingException{
+    private void createMessageHandler(Context context) {
         // 3: TODO create a new message
-        ObjectMapper objectMapper = new ObjectMapper();
-        Message message = objectMapper.readValue(context.body(), Message.class);
-        Message createdMessage = messageService.addMessage(message);
-        if (createdMessage == null){
-            context.status(400);
-        } else {
-            context.status(200);
-            context.json(objectMapper.writeValueAsString(createdMessage));
+        
+        
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Message message = objectMapper.readValue(context.body(), Message.class);
+            Message createdMessage = messageService.addMessage(message);
+            if (createdMessage == null){
+                context.status(400);
+            } else {
+                context.status(200);
+                context.json(objectMapper.writeValueAsString(createdMessage));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
         }
-        // TODO Change all of the handlers to use try/catch after this one is working
-        // try {
-        //     Message message = objectMapper.readValue(context.body(), Message.class);
-        //     Message createdMessage = messageService.addMessage(message);
-        //     if (createdMessage == null){
-        //         context.status(400);
-        //     } else {
-        //         context.status(200);
-        //         context.json(objectMapper.writeValueAsString(createdMessage));
-        //     }
-        // } catch (JsonMappingException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // } catch (JsonProcessingException e) {
-        //     // TODO Auto-generated catch block
-        //     e.printStackTrace();
-        // }
+        
     }
 
     /*

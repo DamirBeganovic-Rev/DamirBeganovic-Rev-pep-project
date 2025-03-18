@@ -100,7 +100,7 @@ public class MessageService {
     }
 
 
-    /* // TODO : Test cases may be broken. Cases 2-4 seem to always pass 
+    /* // TODO : Test cases may be broken. Cases 2-3 seem to always pass 
      * //        No matter what
      * Creates a new Message to be added to the database
      * 
@@ -111,15 +111,15 @@ public class MessageService {
      */
     public Message addMessage(Message message){
         
-        if (message.getMessage_text().isBlank()){
-            return null;
-        }
-        if (message.getMessage_text().length() > 255){
-            return null;
-        } 
-        if (accountDAO.selectAccountByID(message.getPosted_by()) == null){
-            return null;
-        }
+        // if (message.getMessage_text().isBlank()){
+        //     return null;
+        // }
+        // if (message.getMessage_text().length() > 255){
+        //     return null;
+        // } 
+        // if (accountDAO.selectAccountByID(message.getPosted_by()) == null){
+        //     return null;
+        // }
         
         Message addedMessage = new Message();
         addedMessage.setPosted_by(message.getPosted_by());

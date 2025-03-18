@@ -173,12 +173,12 @@ public class MessageDAO {
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()){
-                int generated_message_id = (int) resultSet.getLong("message_id");
-                int posted_by_id = (int) resultSet.getInt("posted_by");
-                long time_posted = (long) resultSet.getLong("time_posted_epoch");
+                int generated_message_id = resultSet.getInt("message_id");
+                int posted_by_id = resultSet.getInt("posted_by");
+                long time_posted = resultSet.getLong("time_posted_epoch");
                 
                 Message insertedMessage = new Message();
-                insertedMessage.setMessage_id(generated_message_id);
+                //insertedMessage.setMessage_id(generated_message_id);
                 insertedMessage.setPosted_by(posted_by_id);
                 insertedMessage.setMessage_text(resultSet.getString("message_text"));
                 insertedMessage.setTime_posted_epoch(time_posted);
