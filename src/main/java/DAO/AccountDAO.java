@@ -14,7 +14,7 @@ public class AccountDAO {
     /*
      * Select an Account from the database by its account_ID
      * 
-     * @param account An object modelling an Account.
+     * @param Account account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
     public Account selectAccountByID(Account account){
@@ -44,7 +44,7 @@ public class AccountDAO {
     /*
      * Select an Account from the database by its username
      * 
-     * @param account An object modelling an Account.
+     * @param Account account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
     public Account selectAccountByUsername(Account account){
@@ -75,7 +75,7 @@ public class AccountDAO {
     /*
      * Select an Account from the database by its username and password
      * 
-     * @param account An object modelling an Account.
+     * @param Account account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
     public Account selectAccountByUsernameAndPassword(Account account){
@@ -106,7 +106,7 @@ public class AccountDAO {
     /*
      * Insert a new Account into the database
      * 
-     * @param account A transient account object that does not have an account_id yet
+     * @param Account account A transient account object that does not have an account_id yet
      * @return Account A persisted account from  the database
      */
     public Account insertAccount(Account account){

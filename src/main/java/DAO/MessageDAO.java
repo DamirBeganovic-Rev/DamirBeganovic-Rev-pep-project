@@ -46,17 +46,17 @@ public class MessageDAO {
     /*
      * Get a message by its message_id
      * 
-     * @param String message_id
+     * @param int message_id
      * @return Message a persisted message from the database
      */
-    public Message selectMessageByMessageId(String message_id){
+    public Message selectMessageByMessageId(int message_id){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
             String sql = "SELECT * FROM message WHERE message_id = ?;";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, message_id);
+            preparedStatement.setInt(1, message_id);
             preparedStatement.execute();
 
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -78,24 +78,45 @@ public class MessageDAO {
     /*
      * Delete a message by its message_id
      * 
-     * @param String message_id
-     * @return Message a persisted message from the database
+     * @param int message_id
      */
-    public Message deleteMessageByMessageId(String message_id){
+    public void deleteMessageByMessageId(int message_id){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
             String sql = "DELETE FROM message WHERE message_id = ?;";
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, message_id);
+            preparedStatement.setInt(1, message_id);
 
             int rowsAffected = preparedStatement.executeUpdate();
-            System.out.println(rowsAffected + " rows affected by deleteMessageById()");
+            System.out.println(rowsAffected + " rows affected by deleteMessageByMessageId()");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        //return null;
+    }
+
+    /*
+     * Update a message by its message_id
+     * 
+     * @param Int message_id
+     */
+    public void updatedMessageByMessageId(int message_id, Message message){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "UPDATE message SET message_text = ? WHERE message_id = ?;";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, message.getMessage_text());
+            preparedStatement.setInt(2, message_id);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " rows affected by updateMessageByMessageId()");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     /*

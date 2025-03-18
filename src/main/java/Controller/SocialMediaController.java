@@ -53,7 +53,7 @@ public class SocialMediaController {
         // 6: delete a message by its message ID
         app.delete("/messages/{message_id}", this::deleteMessageByMessageIdHandler);
 
-        // 7: TODO update a message text by its message ID
+        // 7: update a message text by its message ID
         app.patch("/messages/{message_id}", this::updateMessageByMessageIdHandler);
 
         // 8: TODO get all messages written by a particular user
@@ -180,7 +180,7 @@ public class SocialMediaController {
     private void getMessageByMessageIdHandler(Context context){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String message_id = context.pathParam("message_id");
+            int message_id = Integer.parseInt(context.pathParam("message_id"));
             Message retrievedMessage = messageService.getMessageByMessageId(message_id);
             context.status(200);
             if (retrievedMessage != null) {
@@ -204,7 +204,7 @@ public class SocialMediaController {
     private void deleteMessageByMessageIdHandler(Context context){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
-            String message_id = context.pathParam("message_id");
+            int message_id = Integer.parseInt(context.pathParam("message_id"));
             Message deletedMessage = messageService.deleteMessageByMessageId(message_id);
             context.status(200);
             if (deletedMessage != null){
@@ -217,8 +217,32 @@ public class SocialMediaController {
         }
     }
 
+    /*
+     * Handler to update a message in the database by its message_id.
+     * If messageService returns null, then there are no messages in the database with the
+     * specified message_id and the response body will be empty.
+     * The API will return a status code of (400) if unsuccessful
+     * If messageService returns a Message, then the database has a message with the specified
+     * message_id and the response body will be a JSON representation of the updated message.
+     * The API will return a status code of (200) if successful
+     */
     private void updateMessageByMessageIdHandler(Context context){
-        // 7: TODO update a message text by its message ID
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            int message_id = Integer.parseInt(context.pathParam("message_id"));
+            Message message = objectMapper.readValue(context.body(), Message.class);
+            Message updatedMessage = messageService.updateMessageByMessageId(message_id, message);
+            if (updatedMessage == null){
+                context.status(400);
+            } else {
+                context.status(200);
+                context.json(objectMapper.writeValueAsString(updatedMessage));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        } 
     }
 
     private void getAllMessagesByAccountIdHandler(Context context){
