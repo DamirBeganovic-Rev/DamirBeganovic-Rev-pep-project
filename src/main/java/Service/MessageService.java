@@ -47,6 +47,21 @@ public class MessageService {
         }
     }
 
+    /*
+     * Delete a specific message by its message_id
+     * 
+     * @param String message_id
+     * @return Message a persisted Message from the databse
+     */
+    public Message deleteMessageByMessageId(String message_id){
+        if (messageDAO.selectMessageByMessageId(message_id) == null){
+            return null;
+        } else {
+            Message deletedMessage = messageDAO.selectMessageByMessageId(message_id);
+            return deletedMessage;
+        }
+    }
+
 
     /* // TODO : Test cases may be broken. Cases 2-4 seem to always pass 
      * //        No matter what

@@ -76,6 +76,29 @@ public class MessageDAO {
     }
 
     /*
+     * Delete a message by its message_id
+     * 
+     * @param String message_id
+     * @return Message a persisted message from the database
+     */
+    public Message deleteMessageByMessageId(String message_id){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "DELETE FROM message WHERE message_id = ?;";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, message_id);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            System.out.println(rowsAffected + " rows affected by deleteMessageById()");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /*
      * Insert a new Message into the database
      * 
      * @param message A transient message object that does not have a message_id yet

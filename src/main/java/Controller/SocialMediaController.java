@@ -47,10 +47,10 @@ public class SocialMediaController {
         // 4: get all messages
         app.get("/messages", this::getAllMessagesHandler);
 
-        // 5: TODO get a message by its message ID
+        // 5: get a message by its message ID
         app.get("/messages/{message_id}", this::getMessageByMessageIdHandler);
 
-        // 6: TODO delete a message by its message ID
+        // 6: delete a message by its message ID
         app.delete("/messages/{message_id}", this::deleteMessageByMessageIdHandler);
 
         // 7: TODO update a message text by its message ID
@@ -193,8 +193,28 @@ public class SocialMediaController {
         }
     }
 
+    /*
+     * Handler to delete a message from the database by its message_id.
+     * If messageService returns null, then there are no messages in the database with the
+     * specified message_id and the response body will be empty
+     * If messageService returns a Message, then the database has a message with the specified
+     * message_id and the response body will be a JSON representation of the message.
+     * In both cases, the API will return a status code of 200
+     */
     private void deleteMessageByMessageIdHandler(Context context){
-        // 6: TODO delete a message by its message ID
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String message_id = context.pathParam("message_id");
+            Message deletedMessage = messageService.deleteMessageByMessageId(message_id);
+            context.status(200);
+            if (deletedMessage != null){
+                    context.json(objectMapper.writeValueAsString(deletedMessage));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateMessageByMessageIdHandler(Context context){
