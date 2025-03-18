@@ -122,6 +122,22 @@ public class SocialMediaController {
     private void createMessageHandler(Context context) {
         // 3: TODO create a new message
         
+        // try {
+        //     ObjectMapper objectMapper = new ObjectMapper();
+        //     Message message = objectMapper.readValue(context.body(), Message.class);
+        //     int account_id = message.getPosted_by();
+        //     Message createdMessage = messageService.addMessageByAccountId(message, account_id);
+        //     if (createdMessage == null){
+        //         context.status(400);
+        //     } else {
+        //         context.status(200);
+        //         context.json(objectMapper.writeValueAsString(createdMessage));
+        //     }
+        // } catch (JsonMappingException e) {
+        //     e.printStackTrace();
+        // } catch (JsonProcessingException e) {
+        //     e.printStackTrace();
+        // }
         
         try {
             ObjectMapper objectMapper = new ObjectMapper();

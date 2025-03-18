@@ -178,7 +178,39 @@ public class MessageDAO {
                 long time_posted = resultSet.getLong("time_posted_epoch");
                 
                 Message insertedMessage = new Message();
-                //insertedMessage.setMessage_id(generated_message_id);
+                insertedMessage.setMessage_id(generated_message_id);
+                insertedMessage.setPosted_by(posted_by_id);
+                insertedMessage.setMessage_text(resultSet.getString("message_text"));
+                insertedMessage.setTime_posted_epoch(time_posted);
+                
+                return insertedMessage;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public Message insertMessageByAccountId(Message message, int account_id){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?);";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
+            preparedStatement.setInt(1, account_id);
+            preparedStatement.setString(2, message.getMessage_text());
+            preparedStatement.setLong(3, message.getTime_posted_epoch());
+            preparedStatement.executeUpdate();
+
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()){
+                int generated_message_id = resultSet.getInt("message_id");
+                int posted_by_id = resultSet.getInt("posted_by");
+                long time_posted = resultSet.getLong("time_posted_epoch");
+                
+                Message insertedMessage = new Message();
+                insertedMessage.setMessage_id(generated_message_id);
                 insertedMessage.setPosted_by(posted_by_id);
                 insertedMessage.setMessage_text(resultSet.getString("message_text"));
                 insertedMessage.setTime_posted_epoch(time_posted);

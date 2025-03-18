@@ -15,13 +15,15 @@ public class MessageService {
      */
     public MessageService(){
         messageDAO = new MessageDAO();
+        accountDAO = new AccountDAO();
     }
 
     /*
      * Constructor for a messageService when a messageDAO is provided
      */
-    public MessageService(MessageDAO messageDAO){
+    public MessageService(MessageDAO messageDAO, AccountDAO accountDAO){
         this.messageDAO = messageDAO;
+        this.accountDAO = accountDAO;
     }
 
     /*
@@ -111,21 +113,45 @@ public class MessageService {
      */
     public Message addMessage(Message message){
         
-        // if (message.getMessage_text().isBlank()){
-        //     return null;
-        // }
-        // if (message.getMessage_text().length() > 255){
-        //     return null;
-        // } 
-        // if (accountDAO.selectAccountByID(message.getPosted_by()) == null){
-        //     return null;
-        // }
+        if (message.getMessage_text().isBlank()){
+            return null;
+        }
+        if (message.getMessage_text().length() > 255){
+            return null;
+        } 
+        if (accountDAO.selectAccountByID(message.getPosted_by()) == null){
+            return null;
+        }
         
         Message addedMessage = new Message();
         addedMessage.setPosted_by(message.getPosted_by());
         addedMessage.setMessage_text(message.getMessage_text());
         addedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
         Message insertedMessage = messageDAO.insertMessage(addedMessage);
+        return addedMessage;
+
+        // Message addedMessage = messageDAO.insertMessage(message);
+        // return addedMessage;
+
+    }
+
+    public Message addMessageByAccountId(Message message, int account_id){
+        
+        if (message.getMessage_text().isBlank()){
+            return null;
+        }
+        if (message.getMessage_text().length() > 255){
+            return null;
+        } 
+        if (accountDAO.selectAccountByID(account_id) == null){
+            return null;
+        }
+        
+        Message addedMessage = new Message();
+        addedMessage.setPosted_by(message.getPosted_by());
+        addedMessage.setMessage_text(message.getMessage_text());
+        addedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
+        Message insertedMessage = messageDAO.insertMessageByAccountId(addedMessage, account_id);
         return insertedMessage;
     }
     
