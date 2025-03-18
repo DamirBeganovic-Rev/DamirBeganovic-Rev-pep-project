@@ -2,11 +2,13 @@ package Service;
 
 import java.util.List;
 
+import DAO.AccountDAO;
 import DAO.MessageDAO;
 import Model.Message;
 
 public class MessageService {
     MessageDAO messageDAO;
+    AccountDAO accountDAO;
 
     /*
      * No args constructor for a messageService instantiates a plain messageDAO
@@ -46,6 +48,17 @@ public class MessageService {
             Message retrievedMessage = messageDAO.selectMessageByMessageId(message_id);
             return retrievedMessage;
         }
+    }
+
+    /*
+     * Retrieve all messages from a specified user
+     * 
+     * @param int account_id
+     * @return List<Message> a list of persisted Messages from the database from the speficied user
+     */
+    public List<Message> getAllMessagesByAccountId(int account_id){
+        List<Message> allMessages = messageDAO.selectAllMessagesByUser(account_id);
+        return allMessages;
     }
 
     /*
@@ -98,17 +111,23 @@ public class MessageService {
      */
     public Message addMessage(Message message){
         
-        if (message.getMessage_text().length() == 0){
-            return null;
-        } else if (message.getMessage_text().length() > 255){
-            return null;
-        } else if (message.getPosted_by() < 1){
+        if (message.getMessage_text().isBlank()){
             return null;
         }
-        else {
-            Message addedMessage = messageDAO.insertMessage(message);
-            return addedMessage;
+        if (message.getMessage_text().length() > 255){
+            return null;
+        } 
+        if (accountDAO.selectAccountByID(message.getPosted_by()) == null){
+            return null;
         }
+        
+        Message addedMessage = new Message();
+        addedMessage.setPosted_by(message.getPosted_by());
+        addedMessage.setMessage_text(message.getMessage_text());
+        addedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
+        Message insertedMessage = messageDAO.insertMessage(addedMessage);
+        return insertedMessage;
     }
+    
     
 }

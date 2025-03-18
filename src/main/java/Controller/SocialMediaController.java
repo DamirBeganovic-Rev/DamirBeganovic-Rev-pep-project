@@ -1,5 +1,6 @@
 package Controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -56,7 +57,7 @@ public class SocialMediaController {
         // 7: update a message text by its message ID
         app.patch("/messages/{message_id}", this::updateMessageByMessageIdHandler);
 
-        // 8: TODO get all messages written by a particular user
+        // 8: get all messages written by a particular user
         app.get("accounts/{account_id}/messages", this::getAllMessagesByAccountIdHandler);
 
         return app;
@@ -245,7 +246,26 @@ public class SocialMediaController {
         } 
     }
 
-    private void getAllMessagesByAccountIdHandler(Context context){
-        // 8: TODO get all messages written by a particular user
+    /*
+     * Handler to get all messages from the database from a specified user.
+     * If messageService returns an empty list, then there are no messages in the database
+     * from that user and the response body will be empty
+     * If messageService returns a list of Messages, then the database has messages in it
+     * from the specified user and the response body will be a JSON representation of the 
+     * list of messages.
+     * In both cases, the API will return a status code of 200
+     */
+    private void getAllMessagesByAccountIdHandler(Context context){        
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            int account_id = Integer.parseInt(context.pathParam("account_id"));
+            List<Message> allMessages =  messageService.getAllMessagesByAccountId(account_id);
+            context.status(200);
+            context.json(objectMapper.writeValueAsString(allMessages));
+        }catch (JsonMappingException e) {
+            e.printStackTrace();
+        }catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 }

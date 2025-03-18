@@ -17,14 +17,14 @@ public class AccountDAO {
      * @param Account account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
-    public Account selectAccountByID(Account account){
+    public Account selectAccountByID(int account_id){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
-            String sql = "SELECT * FROM account WHERE user_id = ?;";
+            String sql = "SELECT * FROM account WHERE account_id = ?;";
             
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setInt(1, account.getAccount_id());
+            preparedStatement.setInt(1, account_id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
             while (resultSet.next()){

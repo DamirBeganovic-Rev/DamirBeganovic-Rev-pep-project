@@ -15,7 +15,7 @@ public class MessageDAO {
     /*
      * Get all messages from the database
      * 
-     * @return List<Message> a list of all messages
+     * @return List<Message> a list of all messages persisted in the database
      */
     public List<Message> selectAllMessages(){
         Connection connection = ConnectionUtil.getConnection();
@@ -69,6 +69,40 @@ public class MessageDAO {
                 
                 return selectedMessage;
             }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    /*
+     * Get all messages by a specific user
+     * 
+     * @param int account_id
+     * @return List<Message> a list of persisted message from the database from the specified user
+     */
+    public List<Message> selectAllMessagesByUser(int account_id){
+        Connection connection = ConnectionUtil.getConnection();
+
+        try {
+            String sql = "SELECT * FROM message WHERE posted_by = ?;";
+
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setInt(1, account_id);
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+            List<Message> allMessages = new ArrayList<>();
+            while (resultSet.next()){
+                Message selectedMessage = new Message();
+                selectedMessage.setMessage_id(resultSet.getInt("message_id"));
+                selectedMessage.setPosted_by(resultSet.getInt("posted_by"));
+                selectedMessage.setMessage_text(resultSet.getString("message_text"));
+                selectedMessage.setTime_posted_epoch(resultSet.getLong("time_posted_epoch"));
+
+                allMessages.add(selectedMessage);
+            }
+            return allMessages;
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
