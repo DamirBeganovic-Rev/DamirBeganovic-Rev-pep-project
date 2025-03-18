@@ -28,8 +28,23 @@ public class MessageService {
      * @return List<Message> a list of all messages in the database
      */
     public List<Message> getAllMessages(){
-        List<Message> allMessages = messageDAO.getAllMessages();
+        List<Message> allMessages = messageDAO.selectAllMessages();
         return allMessages;
+    }
+
+    /*
+     * Retrieve a specific message by its message_id
+     * 
+     * @param String message_id
+     * @return Message a persisted Message from the databse
+     */
+    public Message getMessageByMessageId(String message_id){
+        if (messageDAO.selectMessageByMessageId(message_id) == null){
+            return null;
+        } else {
+            Message retrievedMessage = messageDAO.selectMessageByMessageId(message_id);
+            return retrievedMessage;
+        }
     }
 
 
@@ -55,7 +70,6 @@ public class MessageService {
             Message addedMessage = messageDAO.insertMessage(message);
             return addedMessage;
         }
-
     }
     
 }

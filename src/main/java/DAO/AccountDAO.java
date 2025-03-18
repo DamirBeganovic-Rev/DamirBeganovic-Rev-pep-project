@@ -17,7 +17,7 @@ public class AccountDAO {
      * @param account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
-    public Account getAccountByID(Account account){
+    public Account selectAccountByID(Account account){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
@@ -47,7 +47,7 @@ public class AccountDAO {
      * @param account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
-    public Account getAccountByUsername(Account account){
+    public Account selectAccountByUsername(Account account){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
@@ -62,6 +62,7 @@ public class AccountDAO {
                 selectedAccount.setAccount_id(resultSet.getInt("account_id"));
                 selectedAccount.setUsername(resultSet.getString("username"));
                 selectedAccount.setPassword(resultSet.getString("password"));
+                
                 return selectedAccount;
             }
 
@@ -77,7 +78,7 @@ public class AccountDAO {
      * @param account An object modelling an Account.
      * @return Account A persisted account from  the database
      */
-    public Account getAccountByUsernameAndPassword(Account account){
+    public Account selectAccountByUsernameAndPassword(Account account){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
@@ -93,6 +94,7 @@ public class AccountDAO {
                 selectedAccount.setAccount_id(resultSet.getInt("account_id"));
                 selectedAccount.setUsername(resultSet.getString("username"));
                 selectedAccount.setPassword(resultSet.getString("password"));
+                
                 return selectedAccount;
             }
         } catch (SQLException e) {
@@ -116,16 +118,17 @@ public class AccountDAO {
             PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
             preparedStatement.setString(1, account.getUsername());
             preparedStatement.setString(2, account.getPassword());
-
             preparedStatement.executeUpdate();
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if  (resultSet.next()){
                 int generated_account_id = (int) resultSet.getLong("account_id");
+                
                 Account insertedAccount = new Account();
                 insertedAccount.setAccount_id(generated_account_id);
                 insertedAccount.setUsername(account.getUsername());
                 insertedAccount.setPassword(account.getPassword());
+                
                 return insertedAccount;
             }
             

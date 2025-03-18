@@ -30,7 +30,7 @@ public class AccountService {
      */
     public Account addAcount(Account account){
         // Check to see if an account with this username already exists
-        if (accountDAO.getAccountByUsername(account) != null){
+        if (accountDAO.selectAccountByUsername(account) != null){
             return null;
         } 
         // Check to see if the username is not blank and the password is at least 4 characters long
@@ -54,8 +54,8 @@ public class AccountService {
      * the parameter account which only exists in the application
      */
     public Account login(Account account){
-        if (accountDAO.getAccountByUsernameAndPassword(account) != null){
-            Account loggedinAccount = accountDAO.getAccountByUsernameAndPassword(account);
+        if (accountDAO.selectAccountByUsernameAndPassword(account) != null){
+            Account loggedinAccount = accountDAO.selectAccountByUsernameAndPassword(account);
             return loggedinAccount;
         } else {
             return null;

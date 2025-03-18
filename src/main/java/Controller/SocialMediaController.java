@@ -153,14 +153,14 @@ public class SocialMediaController {
      * If messageService returns an empty list, then there are no messages in the database
      * and the response body will be empty
      * If messageService returns a list of Messages, then the database has messages in it
-     * and the response body will be JSON representation of the list of messages.
+     * and the response body will be a JSON representation of the list of messages.
      * In both cases, the API will return a status code of 200
      */
     private void getAllMessagesHandler(Context context){
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<Message> allMessages = messageService.getAllMessages();
-        context.status(200);
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<Message> allMessages = messageService.getAllMessages();
+            context.status(200);
             context.json(objectMapper.writeValueAsString(allMessages));
         } catch (JsonMappingException e) {
             e.printStackTrace();
@@ -169,8 +169,28 @@ public class SocialMediaController {
         }
     }
 
+    /*
+     * Handler to get a specific message from the database by its message_id.
+     * If messageService returns null, then there are no messages in the database with the
+     * specified message_id and the response body will be empty
+     * If messageService returns a Message, then the database has a message with the specified
+     * message_id and the response body will be a JSON representation of the message.
+     * In both cases, the API will return a status code of 200
+     */
     private void getMessageByMessageIdHandler(Context context){
-        // 5: TODO get a message by its message ID
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String message_id = context.pathParam("message_id");
+            Message retrievedMessage = messageService.getMessageByMessageId(message_id);
+            context.status(200);
+            if (retrievedMessage != null) {
+                context.json(objectMapper.writeValueAsString(retrievedMessage));
+            }
+        } catch (JsonMappingException e) {
+            e.printStackTrace();
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void deleteMessageByMessageIdHandler(Context context){
