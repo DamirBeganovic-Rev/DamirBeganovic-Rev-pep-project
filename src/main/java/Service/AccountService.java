@@ -1,23 +1,23 @@
 package Service;
 
-import DAO.AccountDAO;
+import DAO.AccountDAOImpl;
 import Model.Account;
 
 public class AccountService {
-    AccountDAO accountDAO;
+    AccountDAOImpl accountDAOImpl;
 
     /*
      * No args constructor for an accountService instantiates a plain accountDAO
      */
     public AccountService(){
-        accountDAO = new AccountDAO();
+        accountDAOImpl = new AccountDAOImpl();
     }
 
     /*
      * Constructor for an accountService when an accountDAO is provided
      */
-    public AccountService(AccountDAO accountDAO){
-        this.accountDAO = accountDAO;
+    public AccountService(AccountDAOImpl accountDAOImpl){
+        this.accountDAOImpl = accountDAOImpl;
     }
 
     /*
@@ -30,7 +30,7 @@ public class AccountService {
      */
     public Account addAcount(Account account){
         // Check to see if an account with this username already exists
-        if (accountDAO.selectAccountByUsername(account) != null){
+        if (accountDAOImpl.selectAccountByUsername(account) != null){
             return null;
         } 
         // Check to see if the username is not blank and the password is at least 4 characters long
@@ -39,7 +39,7 @@ public class AccountService {
         }
         // All requirements are met, so the account is created
         else {
-            Account addedAccount = accountDAO.insertAccount(account);
+            Account addedAccount = accountDAOImpl.insertAccount(account);
             return addedAccount;
         }
     }
@@ -55,8 +55,8 @@ public class AccountService {
      */
     public Account login(Account account){
         // Check to see if an account with the matching username and password pair exists
-        if (accountDAO.selectAccountByUsernameAndPassword(account) != null){
-            Account loggedinAccount = accountDAO.selectAccountByUsernameAndPassword(account);
+        if (accountDAOImpl.selectAccountByUsernameAndPassword(account) != null){
+            Account loggedinAccount = accountDAOImpl.selectAccountByUsernameAndPassword(account);
             return loggedinAccount;
         } else {
             return null;
