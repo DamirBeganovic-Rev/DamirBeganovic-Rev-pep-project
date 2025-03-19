@@ -1,6 +1,5 @@
 package Controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,7 +41,7 @@ public class SocialMediaController {
         // 2: process login
         app.post("/login", this::loginHandler);
 
-        // 3: TODO create a new message
+        // 3: create a new message
         app.post("/messages", this::createMessageHandler);
 
         // 4: get all messages
@@ -74,8 +73,9 @@ public class SocialMediaController {
     /*
      * Handler to post a new Account
      * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
-     * If accountService returns a null account (meaning posting a account was unsuccessful, the API will return a 400
-     * message (client error).
+     * If accountService returns a null object (meaning posting a account was unsuccessful, the API will return a 400
+     * status code (client error).
+     * If registration is successful, API returns a 200 status code
      */
     private void registerHandler(Context context) {
         try {
@@ -98,8 +98,9 @@ public class SocialMediaController {
     /*
      * Handler to log into an Account
      * The Jackson ObjectMapper will automatically convert the JSON of the POST request into an Account object.
-     * If accountService returns a null account (meaning an account with a username:password key:value pair was 
-     * not found, the API will return a 401 status code message (unauthorized)
+     * If accountService returns a null object (meaning an account with a username:password key:value pair was 
+     * not found, the API will return a 401 status code (unauthorized)
+     * If the login is successful, API will return a 200 status code
      */
     private void loginHandler(Context context) {
         try {
@@ -119,26 +120,14 @@ public class SocialMediaController {
         }
     }
 
-    private void createMessageHandler(Context context) {
-        // 3: TODO create a new message
-        
-        // try {
-        //     ObjectMapper objectMapper = new ObjectMapper();
-        //     Message message = objectMapper.readValue(context.body(), Message.class);
-        //     int account_id = message.getPosted_by();
-        //     Message createdMessage = messageService.addMessageByAccountId(message, account_id);
-        //     if (createdMessage == null){
-        //         context.status(400);
-        //     } else {
-        //         context.status(200);
-        //         context.json(objectMapper.writeValueAsString(createdMessage));
-        //     }
-        // } catch (JsonMappingException e) {
-        //     e.printStackTrace();
-        // } catch (JsonProcessingException e) {
-        //     e.printStackTrace();
-        // }
-        
+    /*
+     * Handler to post a new Message
+     * The Jackson ObjectMapper will automatically convert the JSON of the POST request into a Message object.
+     * If messageService returns a null object (meaning posting a message was unsuccessful, the API will return a
+     * 400 status code (client error).
+     * If the message is created successfully, API returns a 200 status code
+     */
+    private void createMessageHandler(Context context) {    
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             Message message = objectMapper.readValue(context.body(), Message.class);
@@ -163,7 +152,7 @@ public class SocialMediaController {
      * and the response body will be empty
      * If messageService returns a list of Messages, then the database has messages in it
      * and the response body will be a JSON representation of the list of messages.
-     * In both cases, the API will return a status code of 200
+     * In both cases, the API will return a 200 status code
      */
     private void getAllMessagesHandler(Context context){
         try {
@@ -184,7 +173,7 @@ public class SocialMediaController {
      * specified message_id and the response body will be empty
      * If messageService returns a Message, then the database has a message with the specified
      * message_id and the response body will be a JSON representation of the message.
-     * In both cases, the API will return a status code of 200
+     * In both cases, the API will return a 200 status code
      */
     private void getMessageByMessageIdHandler(Context context){
         try {
@@ -208,7 +197,7 @@ public class SocialMediaController {
      * specified message_id and the response body will be empty
      * If messageService returns a Message, then the database has a message with the specified
      * message_id and the response body will be a JSON representation of the message.
-     * In both cases, the API will return a status code of 200
+     * In both cases, the API will return a 200 status code
      */
     private void deleteMessageByMessageIdHandler(Context context){
         try {
@@ -230,10 +219,10 @@ public class SocialMediaController {
      * Handler to update a message in the database by its message_id.
      * If messageService returns null, then there are no messages in the database with the
      * specified message_id and the response body will be empty.
-     * The API will return a status code of (400) if unsuccessful
+     * The API will return a 400 status code  if unsuccessful
      * If messageService returns a Message, then the database has a message with the specified
      * message_id and the response body will be a JSON representation of the updated message.
-     * The API will return a status code of (200) if successful
+     * The API will return a 200 status code if successful
      */
     private void updateMessageByMessageIdHandler(Context context){
         try {
@@ -261,7 +250,7 @@ public class SocialMediaController {
      * If messageService returns a list of Messages, then the database has messages in it
      * from the specified user and the response body will be a JSON representation of the 
      * list of messages.
-     * In both cases, the API will return a status code of 200
+     * In both cases, the API will return a 200 status code
      */
     private void getAllMessagesByAccountIdHandler(Context context){        
         try {

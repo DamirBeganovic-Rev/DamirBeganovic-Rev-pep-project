@@ -101,59 +101,28 @@ public class MessageService {
         return messageDAO.selectMessageByMessageId(message_id);
     }
 
-
-    /* // TODO : Test cases may be broken. Cases 2-3 seem to always pass 
-     * //        No matter what
+    /* 
      * Creates a new Message to be added to the database
      * 
-     * @param message an object representing a new Message.
-     * @return the newly added Message if the add operation was successful, including the message_id. 
+     * @param Message message an object representing a new Message.
+     * @return Message the newly added Message if the add operation was successful, including the message_id. 
      * The returned Message is the persisted Message which is now stored in the database, and not
      * the parameter message which only exists in the application
      */
     public Message addMessage(Message message){
-        
-        if (message.getMessage_text().isBlank()){
+        // Check to see if the message's posted_by ID refers to a real, existing user
+        if (accountDAO.selectAccountByAccountId(message.getPosted_by()) == null){
             return null;
         }
-        if (message.getMessage_text().length() > 255){
-            return null;
-        } 
-        if (accountDAO.selectAccountByID(message.getPosted_by()) == null){
+        // Check to see if the message_text is not blank and not greater than 255
+        if (message.getMessage_text().isBlank() || message.getMessage_text().length() > 255){
             return null;
         }
-        
-        Message addedMessage = new Message();
-        addedMessage.setPosted_by(message.getPosted_by());
-        addedMessage.setMessage_text(message.getMessage_text());
-        addedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
-        Message insertedMessage = messageDAO.insertMessage(addedMessage);
-        return addedMessage;
-
-        // Message addedMessage = messageDAO.insertMessage(message);
-        // return addedMessage;
-
+        // All requirements are met, so the message is created
+        else {
+            Message addedMessage = messageDAO.insertMessage(message);
+            return addedMessage;
+        }
     }
-
-    public Message addMessageByAccountId(Message message, int account_id){
         
-        if (message.getMessage_text().isBlank()){
-            return null;
-        }
-        if (message.getMessage_text().length() > 255){
-            return null;
-        } 
-        if (accountDAO.selectAccountByID(account_id) == null){
-            return null;
-        }
-        
-        Message addedMessage = new Message();
-        addedMessage.setPosted_by(message.getPosted_by());
-        addedMessage.setMessage_text(message.getMessage_text());
-        addedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
-        Message insertedMessage = messageDAO.insertMessageByAccountId(addedMessage, account_id);
-        return insertedMessage;
-    }
-    
-    
 }

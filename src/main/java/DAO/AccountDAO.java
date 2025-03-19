@@ -14,10 +14,10 @@ public class AccountDAO {
     /*
      * Select an Account from the database by its account_ID
      * 
-     * @param Account account An object modelling an Account.
+     * @param int account_id
      * @return Account A persisted account from  the database
      */
-    public Account selectAccountByID(int account_id){
+    public Account selectAccountByAccountId(int account_id){
         Connection connection = ConnectionUtil.getConnection();
 
         try {
@@ -27,14 +27,14 @@ public class AccountDAO {
             preparedStatement.setInt(1, account_id);
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
+            if (resultSet.next()){
                 Account selectedAccount = new Account();
                 selectedAccount.setAccount_id(resultSet.getInt("account_id"));
                 selectedAccount.setUsername(resultSet.getString("username"));
                 selectedAccount.setPassword(resultSet.getString("password"));
+                
                 return selectedAccount;
             }
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -89,7 +89,7 @@ public class AccountDAO {
             preparedStatement.setString(2, account.getPassword());
 
             ResultSet resultSet = preparedStatement.executeQuery();
-            while (resultSet.next()){
+            if (resultSet.next()){
                 Account selectedAccount = new Account();
                 selectedAccount.setAccount_id(resultSet.getInt("account_id"));
                 selectedAccount.setUsername(resultSet.getString("username"));
@@ -131,7 +131,6 @@ public class AccountDAO {
                 
                 return insertedAccount;
             }
-            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         } 

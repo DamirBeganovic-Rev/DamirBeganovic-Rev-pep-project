@@ -13,7 +13,7 @@ import Util.ConnectionUtil;
 public class MessageDAO {
 
     /*
-     * Get all messages from the database
+     * Select all messages from the database
      * 
      * @return List<Message> a list of all messages persisted in the database
      */
@@ -25,6 +25,7 @@ public class MessageDAO {
 
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             ResultSet resultSet = preparedStatement.executeQuery();
+            
             List<Message> allMessages = new ArrayList<>();
             while (resultSet.next()){
                 Message message = new Message();
@@ -44,7 +45,7 @@ public class MessageDAO {
     }
 
     /*
-     * Get a message by its message_id
+     * Select a message by its message_id
      * 
      * @param int message_id
      * @return Message a persisted message from the database
@@ -128,7 +129,6 @@ public class MessageDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        //return null;
     }
 
     /*
@@ -156,7 +156,7 @@ public class MessageDAO {
     /*
      * Insert a new Message into the database
      * 
-     * @param message A transient message object that does not have a message_id yet
+     * @param Message message A transient message object that does not have a message_id yet
      * @return Message A persisted message from the database
      */
     public Message insertMessage(Message message){
@@ -174,14 +174,12 @@ public class MessageDAO {
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
             if (resultSet.next()){
                 int generated_message_id = resultSet.getInt("message_id");
-                int posted_by_id = resultSet.getInt("posted_by");
-                long time_posted = resultSet.getLong("time_posted_epoch");
                 
                 Message insertedMessage = new Message();
                 insertedMessage.setMessage_id(generated_message_id);
-                insertedMessage.setPosted_by(posted_by_id);
-                insertedMessage.setMessage_text(resultSet.getString("message_text"));
-                insertedMessage.setTime_posted_epoch(time_posted);
+                insertedMessage.setPosted_by(message.getPosted_by());
+                insertedMessage.setMessage_text(message.getMessage_text());
+                insertedMessage.setTime_posted_epoch(message.getTime_posted_epoch());
                 
                 return insertedMessage;
             }
@@ -191,36 +189,4 @@ public class MessageDAO {
         return null;
     }
 
-    public Message insertMessageByAccountId(Message message, int account_id){
-        Connection connection = ConnectionUtil.getConnection();
-
-        try {
-            String sql = "INSERT INTO message (posted_by, message_text, time_posted_epoch) VALUES (?, ?, ?);";
-
-            PreparedStatement preparedStatement = connection.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
-            preparedStatement.setInt(1, account_id);
-            preparedStatement.setString(2, message.getMessage_text());
-            preparedStatement.setLong(3, message.getTime_posted_epoch());
-            preparedStatement.executeUpdate();
-
-            ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()){
-                int generated_message_id = resultSet.getInt("message_id");
-                int posted_by_id = resultSet.getInt("posted_by");
-                long time_posted = resultSet.getLong("time_posted_epoch");
-                
-                Message insertedMessage = new Message();
-                insertedMessage.setMessage_id(generated_message_id);
-                insertedMessage.setPosted_by(posted_by_id);
-                insertedMessage.setMessage_text(resultSet.getString("message_text"));
-                insertedMessage.setTime_posted_epoch(time_posted);
-                
-                return insertedMessage;
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return null;
-    }
-    
 }

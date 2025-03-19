@@ -34,7 +34,7 @@ public class AccountService {
             return null;
         } 
         // Check to see if the username is not blank and the password is at least 4 characters long
-        if (account.getUsername().length() == 0 || account.getPassword().length() < 4){
+        if (account.getUsername().isBlank() || account.getPassword().length() < 4){
             return null;
         }
         // All requirements are met, so the account is created
@@ -54,6 +54,7 @@ public class AccountService {
      * the parameter account which only exists in the application
      */
     public Account login(Account account){
+        // Check to see if an account with the matching username and password pair exists
         if (accountDAO.selectAccountByUsernameAndPassword(account) != null){
             Account loggedinAccount = accountDAO.selectAccountByUsernameAndPassword(account);
             return loggedinAccount;
